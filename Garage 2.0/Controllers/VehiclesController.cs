@@ -24,6 +24,23 @@ namespace Garage_2._0.Controllers
             return View(await _context.Vehicle.ToListAsync());
         }
 
+        // GET: Vehicles Overview
+
+        public async Task<IActionResult> Overview()
+        {
+            var vehicles = await _context.Vehicle.ToListAsync();
+
+            var model = vehicles.Select(v => new VehicleOverviewModel()
+            {
+                Typ = v.Typ,
+                RegNr = v.RegNr,
+                Color = v.Color,
+                TimeOfParking = v.TimeOfParking
+            }).ToList();
+
+            return View(model);
+        }
+
         // GET: Vehicles/Details/5
         public async Task<IActionResult> Details(int? id)
         {
