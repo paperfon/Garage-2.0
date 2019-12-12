@@ -84,7 +84,7 @@ namespace Garage_2._0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RegNr,Typ,TimeOfParking,NumnOfWheels,Color,Model,Brand")] Vehicle vehicle)
+        public async Task<IActionResult> Create([Bind("Id,RegNr,Typ,NumnOfWheels,Color,Model,Brand")] Vehicle vehicle)
         {
             if (ModelState.IsValid)
             {

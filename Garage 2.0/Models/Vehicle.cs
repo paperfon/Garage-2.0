@@ -17,9 +17,14 @@ namespace Garage_2._0.Models
         [Range(0, 99, ErrorMessage = "No more than 99 wheels")]
         public int NumnOfWheels { get; set; }
 
-        public String Color { get; set; }
-        public String Model { get; set; }
-        public String Brand { get; set; }
+        public string Color { get; set; }
+        public string Model { get; set; }
+        public string Brand { get; set; }
+
+        public Vehicle()
+        {
+            TimeOfParking = DateTime.UtcNow;
+        }
     }
 
     public enum Typ
