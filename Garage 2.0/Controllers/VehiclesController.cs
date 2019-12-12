@@ -88,26 +88,12 @@ namespace Garage_2._0.Controllers
         {
             if (ModelState.IsValid)
             {
+                vehicle.TimeOfParking = DateTime.UtcNow;
                 _context.Add(vehicle);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(vehicle);
-        }
-
-        public async Task<IActionResult> Filter(string regnr)
-        {
-            
-
-            var filtermodel = string.IsNullOrWhiteSpace(regnr)?
-                 await _context.Vehicle.ToListAsync() :
-                await _context.Vehicle.Where(m => m.RegNr == regnr).ToListAsync();
-
-            
-
-            
-
-            return View(nameof(Index),filtermodel);
         }
 
         // GET: Vehicles/Edit/5
@@ -131,17 +117,24 @@ namespace Garage_2._0.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RegNr,Typ,TimeOfParking,NumnOfWheels,Color,Model,Brand")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RegNr,Typ,NumnOfWheels,Color,Model,Brand")] Vehicle vehicle)
         {
             if (id != vehicle.Id)
             {
                 return NotFound();
             }
 
+            // Adding the time of parking
+            //var editable =  await _context.Vehicle.AsNoTracking().FindAsync(id);
+            //var time = editable.TimeOfParking;
+            // https://stackoverflow.com/questions/26546891/how-keep-original-value-for-some-field-when-execute-edit-on-mvc
+
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    //vehicle.TimeOfParking = time;
                     _context.Update(vehicle);
                     await _context.SaveChangesAsync();
                 }
@@ -193,6 +186,45 @@ namespace Garage_2._0.Controllers
         private bool VehicleExists(int id)
         {
             return _context.Vehicle.Any(e => e.Id == id);
+        }
+
+        // Filter
+        public async Task<IActionResult> Filter(string regnr)
+        {
+            var filtermodel = string.IsNullOrWhiteSpace(regnr) ?
+                 await _context.Vehicle.ToListAsync() :
+                await _context.Vehicle.Where(m => m.RegNr == regnr).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
+
+        // Receipt
+        public async Task<IActionResult> Receipt(int? id)
+        {
+            var vehicle = await _context.Vehicle.FindAsync(id);
+
+            var endtime = DateTime.UtcNow;
+            var startime = vehicle.TimeOfParking;
+            var parkingduration = endtime - startime;
+            double parkingduration2 = (endtime - startime).TotalHours;
+            double price = 100 * parkingduration2;
+
+            var model = new ReceiptViewModel
+            {
+                RegNr = vehicle.RegNr,
+                TimeOfParking = vehicle.TimeOfParking,
+                TimeOfUnParking = endtime,
+                TotalTimeOfParking = parkingduration2,
+                Price = price
+            };
+
+            //var model = vehicles.Select(v => new VehicleOtherInfoModel()
+            //{
+            //    NumnOfWheels = v.NumnOfWheels,
+            //    Brand = v.Brand,
+            //    Model = v.Model
+            //}).ToList();
+
+            return View(model);
         }
     }
 }
