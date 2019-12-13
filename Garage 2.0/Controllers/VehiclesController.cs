@@ -97,17 +97,17 @@ namespace Garage_2._0.Controllers
 
         public async Task<IActionResult> Filter(string regnr)
         {
-            
 
-            var filtermodel = string.IsNullOrWhiteSpace(regnr)?
+
+            var filtermodel = string.IsNullOrWhiteSpace(regnr) ?
                  await _context.Vehicle.ToListAsync() :
                 await _context.Vehicle.Where(m => m.RegNr == regnr).ToListAsync();
 
-            
 
-            
 
-            return View(nameof(Index),filtermodel);
+
+
+            return View(nameof(Index), filtermodel);
         }
 
         // GET: Vehicles/Edit/5
@@ -193,6 +193,24 @@ namespace Garage_2._0.Controllers
         private bool VehicleExists(int id)
         {
             return _context.Vehicle.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> GetStatistics()
+        {
+
+            // var model = await _context.Vehicle.ToListAsync();
+
+            var query = await _context.Vehicle.GroupBy(v => v.Typ.ToString())
+                                           .Select(group => new StatsViewModel
+                                           {
+                                               Count = group.Count()
+
+                                           }).ToListAsync();
+
+
+
+
+            return View(query);
         }
     }
 }
