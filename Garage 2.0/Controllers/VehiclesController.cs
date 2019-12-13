@@ -112,12 +112,18 @@ namespace Garage_2._0.Controllers
             return View(vehicle);
         }
 
+        //public ActionResult EditAdmin(int id)
+        //{
+        //    var current = _context.Vehicle.Find(id);
+
+        //}
+
         // POST: Vehicles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RegNr,Typ,NumnOfWheels,Color,Model,Brand")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(int id, Vehicle vehicle)
         {
             if (id != vehicle.Id)
             {
@@ -125,18 +131,31 @@ namespace Garage_2._0.Controllers
             }
 
             // Adding the time of parking
-            //var editable =  await _context.Vehicle.AsNoTracking().FindAsync(id);
-            //var time = editable.TimeOfParking;
+            //var gettingVehicle = await _context.Vehicle.AsNoTracking().FindAsync(id);
+            //var gettingVehicle = await _context.Vehicle.AsNoTracking().FindAsync(id);
+            //var time = gettingVehicle.TimeOfParking;
             // https://stackoverflow.com/questions/26546891/how-keep-original-value-for-some-field-when-execute-edit-on-mvc
 
+            var current = _context.Vehicle.FirstOrDefault(p => p.Id == id);
+
+            //var current = _context.Vehicle.Find(id).AsNoTracking();
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    //_context.Entry()
                     //vehicle.TimeOfParking = time;
-                    _context.Update(vehicle);
+                    //_context.Update(vehicle);
+                    //await _context.SaveChangesAsync();
+                    current.RegNr = vehicle.RegNr;
+                    current.Typ = vehicle.Typ;
+                    //current.NumnOfWheels = vehicle.NumnOfWheels;
+                    current.Color = vehicle.Color;
+                    current.Model = vehicle.Model;
+                    current.Brand = vehicle.Brand;
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
