@@ -194,5 +194,24 @@ namespace Garage_2._0.Controllers
         {
             return _context.Vehicle.Any(e => e.Id == id);
         }
+        //****************************-----------------------------------------------*********************
+        //public  async Task<IActionResult> GetStatistics()
+        //{
+            
+        //   // var model = await _context.Vehicle.ToListAsync();
+
+        //    var q = await _context.Vehicle.GroupBy(v => v.Typ.ToString())
+        //                                    .Select(group => new
+        //                                            {
+        //                                            Typ = group.Key,
+        //                                            Count = group.Count(c=>c)
+          
+        //                                            }).ToList();
+
+
+
+
+        //    return View (nameof(StatsViewModel),q);
+        //}
     }
 }
