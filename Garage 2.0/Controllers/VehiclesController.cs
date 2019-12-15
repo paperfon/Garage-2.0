@@ -200,10 +200,13 @@ namespace Garage_2._0.Controllers
 
             // var model = await _context.Vehicle.ToListAsync();
 
-            var query = await _context.Vehicle.GroupBy(v => v.Typ.ToString())
+            //model.GroupBy(t => t.Typ.ToString)
+
+            var query = await  _context.Vehicle.GroupBy(v => v.Typ)
                                            .Select(group => new StatsViewModel
                                            {
-                                               Count = group.Count()
+                                               Count = group.Count(),
+                                               VTyp= group.Key
 
                                            }).ToListAsync();
 
