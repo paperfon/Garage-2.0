@@ -1,41 +1,37 @@
-﻿@model IEnumerable<Garage_2._0.Models.StatsViewModel>
+﻿@model Garage_2._0.Models.StatsViewModel
 
 @{
     ViewData["Title"] = "GetStatistics";
 }
 
-<h1>GetStatistics</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Typ)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Count)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Typ)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Count)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<h1>Garage Statistics</h1>
+
+<hr />
+<h3>Wheels Statistics</h3>
+<a asp-action="CountOfWheels">Wheels Statistics</a>
+<hr />
+
+<hr />
+<h3>Revnue Statistics</h3>
+<a asp-action="TotalMinPrice">Revenue Statistics</a>
+<hr />
+
+<hr />
+<h3>Vehicle Types Statistics</h3>
+<a asp-action="GetGroupType">Vehicle Types Statistics</a>
+<hr />
+
+@*<form asp-action="CountOfWheels">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary"> Count Of Wheels</button>
+        </div>
+    </form>*@
+
+
+
+@*<partial name="_CountOfWheelsPartial" />
+    <hr/>
+    <partial name="_TotalMinPricepARTIAL" />*@
+

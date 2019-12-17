@@ -11,5 +11,10 @@ namespace Garage_2._0.Models
 
         public int Count { get; set; }
 
+        public int SumOFwheels { get; set; }
+
+        public double TotalMin { get; set; }
+        public double TotalPrice { get; set; }
+
     }
 }

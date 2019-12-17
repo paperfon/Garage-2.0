@@ -88,6 +88,7 @@ namespace Garage_2._0.Controllers
         {
             if (ModelState.IsValid)
             {
+                vehicle.TimeOfParking = DateTime.UtcNow;
                 _context.Add(vehicle);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -95,21 +96,10 @@ namespace Garage_2._0.Controllers
             return View(vehicle);
         }
 
-        public async Task<IActionResult> Filter(string regnr)
-        {
-            
 
-            var filtermodel = string.IsNullOrWhiteSpace(regnr)?
-                 await _context.Vehicle.ToListAsync() :
-                await _context.Vehicle.Where(m => m.RegNr == regnr).ToListAsync();
 
-            
-
-            
-
-            return View(nameof(Index),filtermodel);
-        }
-
+//=======
+//>>>>>>> origin/Rod
         // GET: Vehicles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -126,24 +116,50 @@ namespace Garage_2._0.Controllers
             return View(vehicle);
         }
 
+        //public ActionResult EditAdmin(int id)
+        //{
+        //    var current = _context.Vehicle.Find(id);
+
+        //}
+
         // POST: Vehicles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RegNr,Typ,TimeOfParking,NumnOfWheels,Color,Model,Brand")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(int id, Vehicle vehicle)
         {
             if (id != vehicle.Id)
             {
                 return NotFound();
             }
 
+            // Adding the time of parking
+            //var gettingVehicle = await _context.Vehicle.AsNoTracking().FindAsync(id);
+            //var gettingVehicle = await _context.Vehicle.AsNoTracking().FindAsync(id);
+            //var time = gettingVehicle.TimeOfParking;
+            // https://stackoverflow.com/questions/26546891/how-keep-original-value-for-some-field-when-execute-edit-on-mvc
+
+            var current = _context.Vehicle.FirstOrDefault(p => p.Id == id);
+
+            //var current = _context.Vehicle.Find(id).AsNoTracking();
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(vehicle);
+                    //_context.Entry()
+                    //vehicle.TimeOfParking = time;
+                    //_context.Update(vehicle);
+                    //await _context.SaveChangesAsync();
+                    current.RegNr = vehicle.RegNr;
+                    current.Typ = vehicle.Typ;
+                    //current.NumnOfWheels = vehicle.NumnOfWheels;
+                    current.Color = vehicle.Color;
+                    current.Model = vehicle.Model;
+                    current.Brand = vehicle.Brand;
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -194,24 +210,114 @@ namespace Garage_2._0.Controllers
         {
             return _context.Vehicle.Any(e => e.Id == id);
         }
-        //****************************-----------------------------------------------*********************
-        //public  async Task<IActionResult> GetStatistics()
-        //{
+
+//<<<<<<< HEAD
+
+        public IActionResult GetStatistics()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetGroupType()
+        {
+
+            // var model = await _context.Vehicle.ToListAsync();
+
+            var model = await _context.Vehicle.GroupBy(v => v.Typ)
+                                           .Select(group => new StatsViewModel
+                                           {
+                                               Count = group.Count(),
+                                               VTyp = group.Key
+
+                                           }).ToListAsync();
+            return PartialView(nameof(GetGroupType), model);
+        }
+
+       
+            public IActionResult CountOfWheels()
+        {
+
+            int SumOfWheels = (from s in  _context.Vehicle select s.NumnOfWheels).Sum();
+
+            //_context.Vehicle.Sum(s => s.NumnOfWheels);
+
             
-        //   // var model = await _context.Vehicle.ToListAsync();
+            var model = new StatsViewModel
+            {
+                SumOFwheels = SumOfWheels
+            };
 
-        //    var q = await _context.Vehicle.GroupBy(v => v.Typ.ToString())
-        //                                    .Select(group => new
-        //                                            {
-        //                                            Typ = group.Key,
-        //                                            Count = group.Count(c=>c)
-          
-        //                                            }).ToList();
+            return View (nameof(CountOfWheels),model);
+        }
 
 
+        public IActionResult TotalMinPrice()
+        {
+
+            var vehicle = _context.Vehicle.ToList();
+
+            var endtime = DateTime.UtcNow;
+
+            double totalmin = 0.0;
+
+            foreach (var item in vehicle)
+            {
+                 totalmin = +(endtime - item.TimeOfParking).TotalMinutes;
+            }
 
 
-        //    return View (nameof(StatsViewModel),q);
-        //}
+
+            var model = new StatsViewModel
+            {
+                TotalMin=totalmin,
+                TotalPrice=(totalmin/60)*100
+
+            };
+
+            return PartialView(nameof(TotalMinPrice), model);
+        }
+
+//=======
+        // Filter
+        public async Task<IActionResult> Filter(string regnr)
+        {
+            var filtermodel = string.IsNullOrWhiteSpace(regnr) ?
+                 await _context.Vehicle.ToListAsync() :
+                await _context.Vehicle.Where(m => m.RegNr == regnr).ToListAsync();
+            return View(nameof(Index), filtermodel);
+        }
+
+        //<<<<<<< HEAD***************************************************************************************
+
+        // Receipt
+        public async Task<IActionResult> Receipt(int? id)
+        {
+            var vehicle = await _context.Vehicle.FindAsync(id);
+
+            var endtime = DateTime.UtcNow;
+            var startime = vehicle.TimeOfParking;
+            var parkingduration = endtime - startime;
+            double parkingduration2 = (endtime - startime).TotalHours;
+            double price = 100 * parkingduration2;
+
+            var model = new ReceiptViewModel
+            {
+                RegNr = vehicle.RegNr,
+                TimeOfParking = vehicle.TimeOfParking,
+                TimeOfUnParking = endtime,
+                TotalTimeOfParking = parkingduration2,
+                Price = price
+            };
+
+            //var model = vehicles.Select(v => new VehicleOtherInfoModel()
+            //{
+            //    NumnOfWheels = v.NumnOfWheels,
+            //    Brand = v.Brand,
+            //    Model = v.Model
+            //}).ToList();
+
+            return View(model);
+        }
+//>>>>>>> origin/Rod
     }
 }

@@ -1,0 +1,32 @@
+﻿@model Garage_2._0.Models.StatsViewModel
+
+@{
+    ViewData["Title"] = "CountOfWheels";
+}
+
+<h1>CountOfWheels</h1>
+
+<div>
+    <h4>Wheels Statistics</h4>
+    <hr />
+    <dl class="row">
+     
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SumOFwheels)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SumOFwheels)
+        </dd>
+    </dl>
+</div>
+<div>
+    @*<form asp-action="CountOfWheels">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary"> Count Of Wheels</button>
+        </div>
+    </form>*@
+
+    
+
+    <a asp-action="GetStatistics">Back to Stats</a>
+</div>

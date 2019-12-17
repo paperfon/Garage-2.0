@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Garage_2._0.Models.StatsViewModel>
+
+@{
+    ViewData["Title"] = "GetGroupType";
+}
+
+<h1>GetGroupType</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VTyp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Count)
+            </th>           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.VTyp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Count)
+            </td>           
+        </tr>
+}
+    </tbody>
+</table>
+<hr />
+<a asp-action="GetStatistics">Back to Stats</a>
