@@ -195,22 +195,70 @@ namespace Garage_2._0.Controllers
             return _context.Vehicle.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> GetStatistics()
+
+        public IActionResult GetStatistics()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetGroupType()
         {
 
             // var model = await _context.Vehicle.ToListAsync();
 
-            var query = await _context.Vehicle.GroupBy(v => v.Typ.ToString())
+            var model = await _context.Vehicle.GroupBy(v => v.Typ)
                                            .Select(group => new StatsViewModel
                                            {
-                                               Count = group.Count()
+                                               Count = group.Count(),
+                                               VTyp = group.Key
 
                                            }).ToListAsync();
-
-
-
-
-            return View(query);
+            return PartialView(nameof(GetGroupType), model);
         }
+
+       
+            public IActionResult CountOfWheels()
+        {
+
+            int SumOfWheels = (from s in  _context.Vehicle select s.NumnOfWheels).Sum();
+
+            //_context.Vehicle.Sum(s => s.NumnOfWheels);
+
+            
+            var model = new StatsViewModel
+            {
+                SumOFwheels = SumOfWheels
+            };
+
+            return View (nameof(CountOfWheels),model);
+        }
+
+
+        public IActionResult TotalMinPrice()
+        {
+
+            var vehicle = _context.Vehicle.ToList();
+
+            var endtime = DateTime.UtcNow;
+
+            double totalmin = 0.0;
+
+            foreach (var item in vehicle)
+            {
+                 totalmin = +(endtime - item.TimeOfParking).TotalMinutes;
+            }
+
+
+
+            var model = new StatsViewModel
+            {
+                TotalMin=totalmin,
+                TotalPrice=(totalmin/60)*100
+
+            };
+
+            return PartialView(nameof(TotalMinPrice), model);
+        }
+
     }
 }

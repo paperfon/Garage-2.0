@@ -1,0 +1,31 @@
+﻿@model Garage_2._0.Models.StatsViewModel
+
+@{
+    ViewData["Title"] = "TotalMinPrice";
+}
+
+<h1>TotalMinPrice</h1>
+
+<div>
+    <h4>StatsViewModel</h4>
+    <hr />
+    <dl class="row">
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalMin)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalMin)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TotalPrice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TotalPrice)
+        </dd>
+    </dl>
+</div>
+<div>
+
+    <a asp-action="GetStatistics">Back to Stats</a>
+</div>
