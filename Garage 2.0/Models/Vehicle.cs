@@ -27,6 +27,7 @@ namespace Garage_2._0.Models
         Car,
         Boat,
         Buss,
-        Airplane
+        Airplane,
+        Motorcycle
     }
 }
