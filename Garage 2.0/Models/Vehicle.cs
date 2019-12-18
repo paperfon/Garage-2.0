@@ -25,7 +25,7 @@ namespace Garage_2._0.Models
     public enum Typ
     {
         Car,
-        Boat,
+        Motorcykel,
         Buss,
         Airplane
     }
