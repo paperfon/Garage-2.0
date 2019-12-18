@@ -221,5 +221,98 @@ namespace Garage_2._0.Controllers
         {
             return _context.Vehicle.Any(e => e.Id == id);
         }
+
+        public IActionResult GetStatistics()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GetGroupType()
+        {
+
+            // var model = await _context.Vehicle.ToListAsync();
+
+            var model = await _context.Vehicle.GroupBy(v => v.Typ)
+                                           .Select(group => new StatsViewModel
+                                           {
+                                               Count = group.Count(),
+                                               VTyp = group.Key
+
+                                           }).ToListAsync();
+            return PartialView(nameof(GetGroupType), model);
+        }
+
+
+        public IActionResult CountOfWheels()
+        {
+
+            int SumOfWheels = (from s in _context.Vehicle select s.NumnOfWheels).Sum();
+
+            //_context.Vehicle.Sum(s => s.NumnOfWheels);
+
+
+            var model = new StatsViewModel
+            {
+                SumOFwheels = SumOfWheels
+            };
+
+            return View(nameof(CountOfWheels), model);
+        }
+
+
+        public IActionResult TotalMinPrice()
+        {
+
+            var vehicle = _context.Vehicle.ToList();
+
+            var endtime = DateTime.UtcNow;
+
+            double totalmin = 0.0;
+
+            foreach (var item in vehicle)
+            {
+                totalmin = +(endtime - item.TimeOfParking).TotalMinutes;
+            }
+
+
+
+            var model = new StatsViewModel
+            {
+                TotalMin = totalmin,
+                TotalPrice = (totalmin / 60) * 100
+
+            };
+
+            return PartialView(nameof(TotalMinPrice), model);
+        }
+
+        public async Task<IActionResult> Receipt(int? id)
+        {
+            var vehicle = await _context.Vehicle.FindAsync(id);
+
+            var endtime = DateTime.UtcNow;
+            var startime = vehicle.TimeOfParking;
+            var parkingduration = endtime - startime;
+            double parkingduration2 = (endtime - startime).TotalHours;
+            double price = 100 * parkingduration2;
+
+            var model = new ReceiptViewModel
+            {
+                RegNr = vehicle.RegNr,
+                TimeOfParking = vehicle.TimeOfParking,
+                TimeOfUnParking = endtime,
+                TotalTimeOfParking = parkingduration2,
+                Price = price
+            };
+
+            //var model = vehicles.Select(v => new VehicleOtherInfoModel()
+            //{
+            //    NumnOfWheels = v.NumnOfWheels,
+            //    Brand = v.Brand,
+            //    Model = v.Model
+            //}).ToList();
+
+            return View(model);
+        }
     }
 }
