@@ -6,8 +6,21 @@
 
 <h1>Index</h1>
 
+
+<form asp-action="Filter">
+    <div class="input-group mb-3">
+        <input type="text" name="regnr" class="form-control" placeholder="Search on title" />
+        @*<div class="input-group-append">
+            <select name="genre" asp-items="@Html.GetEnumSelectList<Typ>()" class="form-control"></select>
+        </div>*@
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-search">&emsp;Search</i></button>
+        </div>
+    </div>
+</form>
+
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Park A Vehicle </a>
 </p>
 <table class="table">
     <thead>
@@ -63,7 +76,8 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Receipt" asp-route-id="@item.Id">Receipt</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">UnPark</a>
             </td>
         </tr>
 }
